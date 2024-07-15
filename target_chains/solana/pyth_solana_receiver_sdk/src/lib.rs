@@ -1,13 +1,7 @@
 use {
-    anchor_lang::{
-        declare_id,
-        prelude::*,
-    },
+    anchor_lang::{declare_id, prelude::*},
     pythnet_sdk::wire::v1::MerklePriceUpdate,
-    solana_program::{
-        pubkey,
-        pubkey::Pubkey,
-    },
+    solana_program::{pubkey, pubkey::Pubkey},
 };
 
 pub mod config;
@@ -22,8 +16,14 @@ declare_id!("G6EoTTTgpkNBtVXo96EQp2m6uwwVh2Kt6YidjkmQqoha");
 pub const PYTH_PUSH_ORACLE_ID: Pubkey = pubkey!("Bt56KjMCV2Ao7DCCffQ7RqGPt6E2zVRoS32hgzkEfEyZ");
 
 #[derive(Debug, AnchorSerialize, AnchorDeserialize, Clone)]
+pub struct PostMultiUpdatesAtomicParams {
+    pub vaa: Vec<u8>,
+    pub merkle_price_updates: Vec<MerklePriceUpdate>,
+}
+
+#[derive(Debug, AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct PostUpdateAtomicParams {
-    pub vaa:                 Vec<u8>,
+    pub vaa: Vec<u8>,
     pub merkle_price_update: MerklePriceUpdate,
 }
 
