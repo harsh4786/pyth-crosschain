@@ -52,11 +52,7 @@ impl accounts::Initialize {
 }
 
 impl accounts::InitPriceUpdate {
-    pub fn populate(
-        payer: Pubkey,
-        write_authority: Pubkey,
-        price_update_account: Pubkey,
-    ) -> Self {
+    pub fn populate(payer: Pubkey, write_authority: Pubkey, price_update_account: Pubkey) -> Self {
         accounts::InitPriceUpdate {
             payer,
             price_update_account,
@@ -66,7 +62,6 @@ impl accounts::InitPriceUpdate {
     }
 }
 
-
 impl accounts::PostUpdateAtomic {
     pub fn populate(
         payer: Pubkey,
@@ -75,7 +70,6 @@ impl accounts::PostUpdateAtomic {
         wormhole_address: Pubkey,
         guardian_set_index: u32,
     ) -> Self {
-
         let guardian_set = get_guardian_set_address(wormhole_address, guardian_set_index);
 
         accounts::PostUpdateAtomic {
@@ -142,19 +136,15 @@ impl instruction::InitPriceUpdate {
         payer: Pubkey,
         write_authority: Pubkey,
         price_update_account: Pubkey,
+        feed_id: [u8; 32],
     ) -> Instruction {
-        let post_update_accounts = accounts::InitPriceUpdate::populate(
-            payer,
-            write_authority,
-            price_update_account,
-        )
-            .to_account_metas(None);
+        let post_update_accounts =
+            accounts::InitPriceUpdate::populate(payer, write_authority, price_update_account)
+                .to_account_metas(None);
         Instruction {
             program_id: ID,
             accounts:   post_update_accounts,
-            data:       instruction::InitPriceUpdate {
-            }
-                .data(),
+            data:       instruction::InitPriceUpdate { feed_id }.data(),
         }
     }
 }
@@ -186,7 +176,6 @@ impl instruction::PostUpdate {
         }
     }
 }
-
 
 impl instruction::PostUpdateAtomic {
     pub fn populate(
@@ -220,7 +209,6 @@ impl instruction::PostUpdateAtomic {
     }
 }
 
-
 impl instruction::SetDataSources {
     pub fn populate(payer: Pubkey, data_sources: Vec<DataSource>) -> Instruction {
         let governance_accounts = accounts::Governance::populate(payer).to_account_metas(None);
@@ -249,7 +237,6 @@ impl instruction::SetFee {
     }
 }
 
-
 impl instruction::SetWormholeAddress {
     pub fn populate(payer: Pubkey, wormhole: Pubkey) -> Instruction {
         let governance_accounts = accounts::Governance::populate(payer).to_account_metas(None);
@@ -260,7 +247,6 @@ impl instruction::SetWormholeAddress {
         }
     }
 }
-
 
 impl instruction::SetMinimumSignatures {
     pub fn populate(payer: Pubkey, minimum_signatures: u8) -> Instruction {

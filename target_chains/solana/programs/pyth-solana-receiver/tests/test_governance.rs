@@ -32,7 +32,6 @@ use {
     solana_sdk::signer::Signer,
 };
 
-
 #[tokio::test]
 async fn test_governance() {
     let ProgramTestFixtures {
@@ -59,7 +58,6 @@ async fn test_governance() {
         single_update_fee_in_lamports: LAMPORTS_PER_SOL,
         minimum_signatures:            20,
     };
-
 
     // this authority is not allowed to do anything
     assert_eq!(
@@ -149,7 +147,6 @@ async fn test_governance() {
             .unwrap(),
         initial_config
     );
-
 
     // Now start changing for real
     program_simulator
@@ -330,7 +327,6 @@ async fn test_governance() {
         .await
         .unwrap();
 
-
     current_config = program_simulator
         .get_anchor_account_data::<Config>(get_config_address())
         .await
@@ -373,7 +369,6 @@ async fn test_governance() {
         into_transaction_error(ReceiverError::TargetGovernanceAuthorityMismatch)
     );
 
-
     // Undo the request
     program_simulator
         .process_ix_with_default_compute_limit(
@@ -406,7 +401,6 @@ async fn test_governance() {
         current_config.minimum_signatures,
         new_config.minimum_signatures
     );
-
 
     // Redo the request
     program_simulator
@@ -446,7 +440,6 @@ async fn test_governance() {
         current_config.minimum_signatures,
         new_config.minimum_signatures
     );
-
 
     // New authority can accept
     program_simulator

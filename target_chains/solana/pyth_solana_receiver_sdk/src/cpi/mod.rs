@@ -1,13 +1,6 @@
 use {
-    self::accounts::{
-        InitPriceUpdate,
-        PostUpdate,
-        PostUpdateAtomic,
-    },
-    crate::{
-        PostUpdateAtomicParams,
-        PostUpdateParams,
-    },
+    self::accounts::{InitPriceUpdate, PostUpdate, PostUpdateAtomic},
+    crate::{PostUpdateAtomicParams, PostUpdateParams},
     anchor_lang::prelude::*,
 };
 
@@ -15,10 +8,12 @@ pub mod accounts;
 
 // This implementation comes from the expanded macros of programs/pyth-solana-receiver/src/lib.rs
 pub fn init_price_update<'info>(
-    ctx: anchor_lang::context::CpiContext<'_, '_, '_, 'info, InitPriceUpdate<'info>>
+    ctx: anchor_lang::context::CpiContext<'_, '_, '_, 'info, InitPriceUpdate<'info>>,
+    feed_id: [u8; 32],
 ) -> anchor_lang::Result<()> {
     let ix = {
-        let data = [22, 25, 222, 233, 20, 77, 103, 161].to_vec();
+        let mut data = [22, 25, 222, 233, 20, 77, 103, 161].to_vec();
+        data.append(&mut feed_id.to_vec());
         let accounts = ctx.to_account_metas(None);
         anchor_lang::solana_program::instruction::Instruction {
             program_id: crate::ID,

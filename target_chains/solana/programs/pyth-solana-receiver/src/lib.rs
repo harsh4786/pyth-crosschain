@@ -31,9 +31,9 @@ use {
         },
     },
     solana_program::{
-        pubkey,
         keccak,
         program_memory::sol_memcpy,
+        pubkey,
         secp256k1_recover::secp256k1_recover,
         system_instruction,
     },
@@ -58,14 +58,12 @@ declare_id!(pyth_solana_receiver_sdk::ID);
 
 pub const WORMHOLE_ID: Pubkey = pubkey!("HDwcJBJXjL9FpJ7UBsYBtaDjsBUhuLCUYoz3zr8SWWaQ");
 
-pub const MINIMUM_SIGNERS : u8 = 2;
+pub const MINIMUM_SIGNERS: u8 = 2;
 
-pub const VALID_DATA_SOURCES : [DataSource; 1] = [
-    DataSource {
-        chain: 26,
-        emitter: pubkey!("G9LV2mp9ua1znRAfYwZz5cPiJMAbo1T6mbjdQsDZuMJg")
-    }
-];
+pub const VALID_DATA_SOURCES: [DataSource; 1] = [DataSource {
+    chain:   26,
+    emitter: pubkey!("G9LV2mp9ua1znRAfYwZz5cPiJMAbo1T6mbjdQsDZuMJg"),
+}];
 
 #[program]
 pub mod pyth_solana_receiver {
@@ -135,12 +133,12 @@ pub mod pyth_solana_receiver {
         Ok(())
     }
 
-    pub fn init_price_update(ctx: Context<InitPriceUpdate>) -> Result<()> {
+    pub fn init_price_update(ctx: Context<InitPriceUpdate>, feed_id: [u8; 32]) -> Result<()> {
         let price_update_account: &mut Account<'_, PriceUpdateV2> =
             &mut ctx.accounts.price_update_account;
 
         price_update_account.write_authority = ctx.accounts.write_authority.key();
-
+        price_update_account.price_message.feed_id = feed_id;
         Ok(())
     }
 
@@ -304,12 +302,12 @@ pub struct AcceptGovernanceAuthorityTransfer<'info> {
 #[derive(Accounts)]
 pub struct InitPriceUpdate<'info> {
     #[account(mut)]
-    pub payer: Signer<'info>,
+    pub payer:                Signer<'info>,
     #[account(init, payer = payer, space = PriceUpdateV2::LEN)]
     pub price_update_account: Account<'info, PriceUpdateV2>,
-    pub system_program: Program<'info, System>,
+    pub system_program:       Program<'info, System>,
     #[account(mut)]
-    pub write_authority: Signer<'info>,
+    pub write_authority:      Signer<'info>,
 }
 
 #[derive(Accounts)]

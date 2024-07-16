@@ -40,8 +40,8 @@ use {
     },
     solana_program::{
         native_token::LAMPORTS_PER_SOL,
-        pubkey::Pubkey,
         pubkey,
+        pubkey::Pubkey,
     },
     solana_sdk::{
         rent::Rent,
@@ -50,7 +50,7 @@ use {
     },
 };
 
-pub const BRIDGE_ID : Pubkey = pubkey!("HDwcJBJXjL9FpJ7UBsYBtaDjsBUhuLCUYoz3zr8SWWaQ");
+pub const BRIDGE_ID: Pubkey = pubkey!("HDwcJBJXjL9FpJ7UBsYBtaDjsBUhuLCUYoz3zr8SWWaQ");
 
 // This file is meant to test the errors that can be thrown by post_price_update_from_vaa
 #[tokio::test]
@@ -80,6 +80,7 @@ async fn test_invalid_wormhole_message() {
                 poster.pubkey(),
                 poster.pubkey(),
                 price_update_keypair.pubkey(),
+                feed_1.feed_id().clone(),
             ),
             &vec![&poster, &price_update_keypair],
             None,
@@ -118,7 +119,6 @@ async fn test_invalid_update_message() {
     let message = create_accumulator_message(&[feed_1, feed_2], &[feed_1, feed_2], false, true);
     let (vaa, merkle_price_updates) = deserialize_accumulator_update_data(message).unwrap();
 
-
     let ProgramTestFixtures {
         mut program_simulator,
         encoded_vaa_addresses: _,
@@ -138,6 +138,7 @@ async fn test_invalid_update_message() {
                 poster.pubkey(),
                 poster.pubkey(),
                 price_update_keypair.pubkey(),
+                feed_1.feed_id().clone(),
             ),
             &vec![&poster, &price_update_keypair],
             None,
@@ -167,7 +168,6 @@ async fn test_invalid_update_message() {
         into_transaction_error(ReceiverError::DeserializeMessageFailed)
     );
 }
-
 
 #[tokio::test]
 async fn test_post_price_update_from_vaa() {
@@ -212,6 +212,7 @@ async fn test_post_price_update_from_vaa() {
                 poster.pubkey(),
                 poster.pubkey(),
                 price_update_keypair.pubkey(),
+                feed_1.feed_id().clone(),
             ),
             &vec![&poster, &price_update_keypair],
             None,
@@ -262,7 +263,6 @@ async fn test_post_price_update_from_vaa() {
             .unwrap(),
         into_transaction_error(ReceiverError::UnsupportedMessageType)
     );
-
 
     // change the data source
     program_simulator
@@ -317,7 +317,6 @@ async fn test_post_price_update_from_vaa() {
         )
         .await
         .unwrap();
-
 
     // assert_eq!(
     //     program_simulator
@@ -430,7 +429,6 @@ async fn test_post_price_update_from_vaa() {
         program_simulator.get_clock().await.unwrap().slot
     );
 
-
     // Now change the fee!
     program_simulator
         .process_ix_with_default_compute_limit(
@@ -488,7 +486,6 @@ async fn test_post_price_update_from_vaa() {
         price_update_account.posted_slot,
         program_simulator.get_clock().await.unwrap().slot
     );
-
 
     // Airdrop more
     program_simulator

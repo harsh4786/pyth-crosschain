@@ -38,14 +38,12 @@ use {
     },
 };
 
-
 #[tokio::test]
 async fn test_post_update() {
     let feed_1 = create_dummy_price_feed_message(100);
     let feed_2 = create_dummy_price_feed_message(200);
     let message = create_accumulator_message(&[feed_1, feed_2], &[feed_1, feed_2], false, false);
     let (vaa, merkle_price_updates) = deserialize_accumulator_update_data(message).unwrap();
-
 
     let ProgramTestFixtures {
         mut program_simulator,
@@ -68,6 +66,7 @@ async fn test_post_update() {
                 poster.pubkey(),
                 poster.pubkey(),
                 price_update_keypair.pubkey(),
+                feed_1.feed_id().clone(),
             ),
             &vec![&poster, &price_update_keypair],
             None,
@@ -145,7 +144,6 @@ async fn test_post_update() {
         program_simulator.get_clock().await.unwrap().slot
     );
 
-
     // This poster doesn't have the write authority
     let poster_2 = program_simulator.get_funded_keypair().await.unwrap();
     assert_eq!(
@@ -199,13 +197,13 @@ async fn test_post_update_wrong_encoded_vaa_owner() {
     let poster = program_simulator.get_funded_keypair().await.unwrap();
     let price_update_keypair = Keypair::new();
 
-
     program_simulator
         .process_ix_with_default_compute_limit(
             InitPriceUpdate::populate(
                 poster.pubkey(),
                 poster.pubkey(),
                 price_update_keypair.pubkey(),
+                feed_1.feed_id().clone(),
             ),
             &vec![&poster, &price_update_keypair],
             None,
@@ -259,6 +257,7 @@ async fn test_post_update_wrong_setup() {
                 poster.pubkey(),
                 poster.pubkey(),
                 price_update_keypair.pubkey(),
+                feed_1.feed_id().clone(),
             ),
             &vec![&poster, &price_update_keypair],
             None,
