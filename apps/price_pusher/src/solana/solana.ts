@@ -94,6 +94,7 @@ export class SolanaPricePusher implements IPricePusher {
       opts: {
         skipPreflight: true,
         maxRetries: 0,
+        preflightCommitment: 'confirmed'
       }
     });
   }
