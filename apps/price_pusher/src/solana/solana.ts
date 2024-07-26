@@ -125,7 +125,11 @@ export class SolanaPricePusher implements IPricePusher {
       const tx = await this.txSender.getVersionedTransaction(ixs, [this.addressLookupTable],
         undefined, undefined, await this.txSender.connection.getLatestBlockhash('confirmed')
       );
-      this.txSender.sendVersionedTransaction(tx).then((txSig) => {
+      this.txSender.sendVersionedTransaction(tx, [], {
+        preflightCommitment: 'confirmed',
+        skipPreflight: true,
+        maxRetries: 0
+      }).then((txSig) => {
         console.log(new Date(), `updatePriceFeed successful: ${txSig.txSig}`);
       }).catch((e) => {
         console.error(new Date(), "updatePriceFeed failed", e);
