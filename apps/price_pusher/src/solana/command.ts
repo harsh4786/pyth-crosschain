@@ -9,7 +9,6 @@ import {
   SolanaPricePusherJito,
 } from "./solana";
 import { Controller } from "../controller";
-import { PythSolanaReceiver } from "@pythnetwork/pyth-solana-receiver";
 import NodeWallet from "@coral-xyz/anchor/dist/cjs/nodewallet";
 import { Keypair, Connection } from "@solana/web3.js";
 import fs from "fs";
@@ -19,7 +18,7 @@ import {
   searcherClient,
 } from "jito-ts/dist/sdk/block-engine/searcher";
 import express from 'express';
-import { DriftClient } from "@drift-labs/sdk";
+import { AverageOverSlotsStrategy, DriftClient, PriorityFeeMethod, PriorityFeeSubscriber, WhileValidTxSender } from "@drift-labs/sdk";
 
 export default {
   command: "solana",
@@ -75,7 +74,6 @@ export default {
     const {
       endpoint,
       keypairFile,
-      computeUnitPriceMicroLamports,
       priceConfigFile,
       priceServiceEndpoint,
       pushingFrequency,
@@ -114,9 +112,20 @@ export default {
       loadKeypair(fs.readFileSync(keypairFile, "ascii"))
     );
 
+    const connection = new Connection(endpoint, "processed");
     const driftClient = new DriftClient({
-      connection: new Connection(endpoint, "processed"),
+      connection,
       wallet,
+      txSender: new WhileValidTxSender({
+        connection,
+        wallet,
+        opts: {
+          commitment: "processed",
+          maxRetries: 0,
+          skipPreflight: true
+        },
+        trackTxLandRate: true
+      })
     });
 
     let solanaPricePusher;
@@ -137,10 +146,22 @@ export default {
       const addressLookupTable = (await driftClient.connection.getAddressLookupTable(
         new PublicKey(addressLookupTablePubkey)
       )).value!;
+      const priorityFeeSubscriber = new PriorityFeeSubscriber({
+        connection: driftClient.connection,
+        frequencyMs: 5000,
+        customStrategy: new AverageOverSlotsStrategy(),
+        // the specific bot will update this, if multiple bots are using this,
+        // the last one to update it will determine the addresses to use...
+        addresses: [],
+        priorityFeeMethod: PriorityFeeMethod.SOLANA,
+        maxFeeMicroLamports: 30000000,
+        priorityFeeMultiplier: 1.0,
+      });
+      await priorityFeeSubscriber.subscribe();
       solanaPricePusher = new SolanaPricePusher(
         driftClient,
         priceServiceConnection,
-        computeUnitPriceMicroLamports,
+        priorityFeeSubscriber,
         addressLookupTable
       );
     }

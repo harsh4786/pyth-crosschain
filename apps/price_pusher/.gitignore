@@ -2,3 +2,5 @@ docker-compose.yaml
 price-config.yaml
 test-config.solana.json
 lib
+price-config.test.sample.yaml
+test-config.solana.json
