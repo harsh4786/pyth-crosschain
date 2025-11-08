@@ -30,5 +30,5 @@ solana-program = "~2.3"
 [dev-dependencies]
 hex = "0.4.3"
 solana-program-test = "1.18.26"
-solana-sdk = "~2.3"
+solana-sdk = {version = ">=2.3"}
 tokio = { version = "1.40.0", features = ["full"] }
