@@ -7,7 +7,7 @@ edition = "2021"
 pyth-lazer-protocol = { path = "../rust/protocol" }
 pyth-lazer-solana-contract = { path = "../../contracts/solana/programs/pyth-lazer-solana-contract", features = ["no-entrypoint"] }
 
-solana-program = "2"
+solana-program = {version = "2"}
 bytemuck = { version = "1.4.0", features = ["derive"] }
 byteorder = "1.4.3"
 thiserror = "1.0"
