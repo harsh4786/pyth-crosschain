@@ -8,11 +8,11 @@ crate-type = ["lib"]
 name = "program_simulator"
 
 
-[dependencies]
-solana-sdk = "2"
-solana-client = "2"
-solana-program-test = "*"
-solana-program = "2"
+[dependencies]"
+solana-sdk = {version = "2.0.15"}
+solana-client = {version = "2.0.15"}
+solana-program-test = {version = "2.0.15"}
+solana-program ={version = "2.0.15"}
 bincode = "*"
 borsh = "*"
 anchor-lang = ">=0.28.0"
