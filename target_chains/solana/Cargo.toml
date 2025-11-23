@@ -20,8 +20,8 @@ codegen-units = 1
 wormhole-core-bridge-solana = {git = "https://github.com/wormhole-foundation/wormhole", rev = "7bd40b595e22c5512dfaa2ed8e6d7441df743a69"}
 wormhole-vaas-serde =  "0.1.0"
 serde_wormhole = "0.1.0"
-anchor-lang = "0.31"
-anchor-client = "0.31"
+anchor-lang = "0.29"
+anchor-client = "0.29"
 solana-program = {version = "2.0.15"}
 solana-program-test = {version = "2.0.15"}
 solana-sdk = {version = "2.0.15"}

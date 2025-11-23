@@ -11,4 +11,4 @@ solana-program = {version = "2"}
 bytemuck = { version = "1.4.0", features = ["derive"] }
 byteorder = "1.4.3"
 thiserror = "1.0"
-anchor-lang = "0.31"
+anchor-lang = "0.29"
